@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Expense & Budget Tracker{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Fraunces:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+  <span class="coin coin-1"><i class="fa-solid fa-coins"></i></span>
+  <span class="coin coin-2"><i class="fa-solid fa-sack-dollar"></i></span>
+  <span class="coin coin-3"><i class="fa-solid fa-wallet"></i></span>
+</div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="{{ url_for('dashboard') }}" class="brand">
+      <span class="brand-icon"><i class="fa-solid fa-wallet"></i></span>
+      <span class="brand-text">Sunset<span class="accent">Wallet</span></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' else '' }}">
+        <i class="fa-solid fa-chart-pie"></i><span>Dashboard</span>
+      </a>
+      <a href="{{ url_for('list_expenses') }}" class="{{ 'active' if request.endpoint in ['list_expenses','add_expense','edit_expense'] else '' }}">
+        <i class="fa-solid fa-receipt"></i><span>Expenses</span>
+      </a>
+      <a href="{{ url_for('list_budgets') }}" class="{{ 'active' if request.endpoint in ['list_budgets','add_budget','edit_budget'] else '' }}">
+        <i class="fa-solid fa-bullseye"></i><span>Budgets</span>
+      </a>
+      <a href="{{ url_for('summary') }}" class="{{ 'active' if request.endpoint=='summary' else '' }}">
+        <i class="fa-solid fa-chart-line"></i><span>Summary</span>
+      </a>
+    </nav>
+
+    <a href="{{ url_for('add_expense') }}" class="btn-add-top">
+      <i class="fa-solid fa-plus"></i><span>Add Expense</span>
+    </a>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main class="page-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack" id="flashStack">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}" data-autohide="4500">
+            <i class="fa-solid {{ 'fa-circle-check' if category=='success' else 'fa-triangle-exclamation' }}"></i>
+            <span>{{ message }}</span>
+            <div class="flash-progress"></div>
+            <button class="flash-close" aria-label="Close">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <p>Built with <i class="fa-solid fa-heart pulse-heart"></i> using Flask &middot; Personal Expense &amp; Budget Tracker &copy; <span id="year"></span></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

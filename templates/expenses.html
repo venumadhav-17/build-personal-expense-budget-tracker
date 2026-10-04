@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Expenses · SunsetWallet{% endblock %}
+{% block content %}
+
+<section class="page-header reveal">
+  <div>
+    <h1><i class="fa-solid fa-receipt"></i> Expenses</h1>
+    <p>{{ expenses|length }} record(s) &middot; Total ₹{{ "%.2f"|format(total) }}</p>
+  </div>
+  <a href="{{ url_for('add_expense') }}" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Expense</a>
+</section>
+
+<section class="panel glass reveal filter-panel">
+  <form method="get" class="filter-form">
+    <div class="input-group">
+      <label><i class="fa-solid fa-magnifying-glass"></i> Search</label>
+      <input type="text" name="q" placeholder="Search description..." value="{{ filters.q }}">
+    </div>
+    <div class="input-group">
+      <label>Category</label>
+      <select name="category">
+        <option value="">All</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {{ 'selected' if c == filters.category else '' }}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Month</label>
+      <select name="month">
+        <option value="">All</option>
+        {% for m in all_months %}
+          <option value="{{ m }}" {{ 'selected' if m == filters.month else '' }}>{{ m }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Payment Method</label>
+      <select name="payment_method">
+        <option value="">All</option>
+        {% for p in payment_methods %}
+          <option value="{{ p }}" {{ 'selected' if p == filters.payment_method else '' }}>{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="input-group filter-actions">
+      <button type="submit" class="btn-primary"><i class="fa-solid fa-filter"></i> Filter</button>
+      <a href="{{ url_for('list_expenses') }}" class="btn-ghost">Reset</a>
+    </div>
+  </form>
+</section>
+
+<section class="panel glass reveal">
+  {% if expenses %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th>Date</th><th>Category</th><th>Description</th><th>Method</th><th>Amount</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for e in expenses %}
+        <tr>
+          <td>{{ e.date }}</td>
+          <td><span class="pill pill-{{ e.category|lower }}">{{ e.category }}</span></td>
+          <td>{{ e.description or '—' }}</td>
+          <td>{{ e.payment_method }}</td>
+          <td class="amount">₹{{ "%.2f"|format(e.amount) }}</td>
+          <td class="actions">
+            <a href="{{ url_for('edit_expense', expense_id=e.id) }}" class="icon-btn" title="Edit"><i class="fa-solid fa-pen"></i></a>
+            <form method="post" action="{{ url_for('delete_expense', expense_id=e.id) }}" onsubmit="return confirm('Delete this expense?');" style="display:inline;">
+              <button type="submit" class="icon-btn icon-btn-danger" title="Delete"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="empty-note">No expenses match these filters.</p>
+  {% endif %}
+</section>
+{% endblock %}

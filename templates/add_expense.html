@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Add Expense · SunsetWallet{% endblock %}
+{% block content %}
+
+<section class="form-page reveal">
+  <div class="panel glass form-panel">
+    <div class="panel-header">
+      <h2><i class="fa-solid fa-plus"></i> Add Expense</h2>
+    </div>
+    <form method="post" class="stacked-form" id="expenseForm">
+      <div class="input-group">
+        <label>Date</label>
+        <input type="date" name="date" value="{{ form.get('date','') }}" required>
+      </div>
+      <div class="input-group">
+        <label>Category</label>
+        <select name="category" required>
+          <option value="">Select category</option>
+          {% for c in categories %}
+            <option value="{{ c }}" {{ 'selected' if c == form.get('category') else '' }}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Amount (₹)</label>
+        <input type="number" step="0.01" min="0.01" name="amount" value="{{ form.get('amount','') }}" required>
+      </div>
+      <div class="input-group">
+        <label>Payment Method</label>
+        <select name="payment_method" required>
+          {% for p in payment_methods %}
+            <option value="{{ p }}" {{ 'selected' if p == form.get('payment_method') else '' }}>{{ p }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group span-2">
+        <label>Description (optional)</label>
+        <textarea name="description" rows="3" placeholder="What was this for?">{{ form.get('description','') }}</textarea>
+      </div>
+      <div class="form-actions span-2">
+        <a href="{{ url_for('list_expenses') }}" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Expense</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

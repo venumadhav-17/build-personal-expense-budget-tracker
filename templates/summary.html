@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Summary · SunsetWallet{% endblock %}
+{% block content %}
+
+<section class="page-header reveal">
+  <div>
+    <h1><i class="fa-solid fa-chart-line"></i> Spending Summary</h1>
+    <p>Full breakdown for {{ selected_month }}</p>
+  </div>
+  <form class="month-picker" method="get">
+    <label for="month"><i class="fa-solid fa-calendar-days"></i></label>
+    <select name="month" id="month" onchange="this.form.submit()">
+      {% for m in all_months %}
+        <option value="{{ m }}" {{ 'selected' if m == selected_month else '' }}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</section>
+
+<section class="dash-columns reveal">
+  <div class="panel glass">
+    <div class="panel-header"><h2><i class="fa-solid fa-chart-pie"></i> Category Breakdown</h2></div>
+    <canvas id="summaryPieChart" height="240"></canvas>
+  </div>
+  <div class="panel glass">
+    <div class="panel-header"><h2><i class="fa-solid fa-chart-column"></i> 6-Month Trend</h2></div>
+    <canvas id="trendChart" height="240"></canvas>
+  </div>
+</section>
+
+<section class="panel glass reveal">
+  <div class="panel-header"><h2><i class="fa-solid fa-list-ul"></i> Category Totals</h2></div>
+  {% if summary.category_progress %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Category</th><th>Spent</th><th>Budget</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for row in summary.category_progress %}
+        <tr>
+          <td><span class="pill pill-{{ row.category|lower }}">{{ row.category }}</span></td>
+          <td class="amount">₹{{ "%.2f"|format(row.spent) }}</td>
+          <td>{{ "₹%.2f"|format(row.limit) if row.limit else "—" }}</td>
+          <td>
+            {% if row.limit %}
+              {% if row.over %}
+                <span class="status-tag status-over"><i class="fa-solid fa-triangle-exclamation"></i> Over budget</span>
+              {% else %}
+                <span class="status-tag status-ok"><i class="fa-solid fa-circle-check"></i> On track</span>
+              {% endif %}
+            {% else %}
+              <span class="status-tag status-none">No budget</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="empty-note">No expenses recorded for this month yet.</p>
+  {% endif %}
+</section>
+
+<script>
+  window.__pieData = {{ summary.by_category|tojson }};
+  window.__trendData = {{ trend|tojson }};
+</script>
+{% endblock %}

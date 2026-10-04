@@ -1,0 +1,5 @@
+templates/* linguist-vendored
+static/* linguist-vendored
+data/* linguist-vendored
+screenshots/* linguist-documentation
+*.md linguist-documentation

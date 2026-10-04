@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found · SunsetWallet{% endblock %}
+{% block content %}
+<section class="error-page reveal">
+  <div class="error-code">404</div>
+  <h1>Lost your wallet?</h1>
+  <p>The page you're looking for doesn't exist.</p>
+  <a href="{{ url_for('dashboard') }}" class="btn-primary"><i class="fa-solid fa-house"></i> Back to Dashboard</a>
+</section>
+{% endblock %}
